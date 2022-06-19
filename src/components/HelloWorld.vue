@@ -1,58 +1,103 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
-  </div>
+  <v-container class="container">
+    <v-row>
+      <v-col cols="4" offset="4">
+        <div class="family empty"></div>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col cols="4" class="pr-0">
+        <SingleCard v-if="families.length !== 6" />
+
+        <DoubleCard v-else :items="families.slice(0, 2)" />
+      </v-col>
+
+      <v-col cols="4">
+        <SingleCard v-if="families.length === 2" />
+
+        <DoubleCard v-else-if="families.length > 2" :items="families.slice(1, 4)" />
+
+        <div v-if="families.length === 1" class="family empty" />
+
+      </v-col>
+
+      <v-col cols="4" class="pl-0">
+        <DoubleCard v-if="families.length >= 4" :items="families.slice(3, 6)" />
+
+        <div v-if="families.length <= 3" class="family empty"></div>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col cols="4" offset="4">
+        <div class="family empty"></div>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-col cols="4" offset="4" class="justify-center d-flex">
+          <v-btn @click="updateFamilies('+')" large>+</v-btn>
+
+          <div class="mx-4" />
+          <v-btn @click="updateFamilies" large>-</v-btn>
+      </v-col>
+    </v-row>
+
+    {{families}}
+  </v-container>
 </template>
 
 <script>
+import SingleCard from "@/components/SingleCard.vue";
+import DoubleCard from "@/components/DoubleCard.vue";
+import { ref } from '@vue/reactivity';
+
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  }
-}
+  components: {
+    SingleCard,
+    DoubleCard,
+  },
+  setup() {
+    const families = ref(["A", "B"]);
+
+    const updateFamilies = operator => {
+      if (operator === "+") {
+        if(families.value.length < 6) {
+          families.value.push("A");
+        }
+      } else {
+        if(families.value.length > 1) {
+          families.value.pop();
+        }
+      }
+    }
+
+    return {
+      families,
+      updateFamilies
+    };
+  },
+};
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+.container {
+  background-color: black;
+  height: 100vh;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+
+.offset-col {
+  background-color: #fff;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+
+.family {
+  border-radius: 5px;
+  height: 200px;
+  padding: 10px;
+  background-color: rgb(116, 116, 116);
 }
-a {
-  color: #42b983;
+.family.double {
+  height: 94px;
 }
 </style>
